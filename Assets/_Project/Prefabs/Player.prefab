@@ -147,7 +147,7 @@ Transform:
   m_GameObject: {fileID: 5834887727719368437}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0.099}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -381,7 +381,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   jumpForce: 5
   bulletPrefab: {fileID: 6203602689070415449, guid: 64b57a635923ac4478af055980998966, type: 3}
-  firePoint: {fileID: 837749820954154511, guid: f4b86f570c213834d8f6cb149666445e, type: 3}
+  firePoint: {fileID: 2950197574924429483}
 --- !u!114 &7052191392453477692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,6 +396,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   ShowTopMostFoldoutHeaderGroup: 1
   maxHealth: 3
+  gameOverPanel: {fileID: 0}
 --- !u!1001 &2544951699681345188
 PrefabInstance:
   m_ObjectHideFlags: 0

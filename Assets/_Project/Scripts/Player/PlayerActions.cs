@@ -30,12 +30,14 @@ public class PlayerActions : NetworkBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            // Enviamos posición y rotación ACTUALES del firePoint al servidor
-            RequestShootRpc(firePoint.position, firePoint.rotation, OwnerClientId);
+            // Enviamos posición y rotación del firePoint local al servidor
+            if (firePoint != null)
+            {
+                RequestShootRpc(firePoint.position, firePoint.rotation, OwnerClientId);
+            }
         }
     }
 
-    // --- LÓGICA DE SALTO ---
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Owner)]
     private void RequestJumpRpc()
     {
@@ -59,14 +61,11 @@ public class PlayerActions : NetworkBehaviour
         transform.localScale = originalScale;
     }
 
-    // --- LÓGICA DE DISPARO ---
-    // Recibe posición y rotación exactas del cliente dueño + su clientId
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Owner)]
     private void RequestShootRpc(Vector3 spawnPosition, Quaternion spawnRotation, ulong shooterClientId)
     {
         GameObject bulletInstance = Instantiate(bulletPrefab, spawnPosition, spawnRotation);
 
-        // Guardamos quién disparó para ignorar colisiones propias
         BulletBehaviour bullet = bulletInstance.GetComponent<BulletBehaviour>();
         if (bullet != null)
         {

@@ -1,74 +1,46 @@
-using UnityEngine;
 using Unity.Netcode;
+using UnityEngine;
 
 public class PlayerHealth : NetworkBehaviour
 {
     [Header("Configuración de Vida")]
     public int maxHealth = 3;
+    public GameObject gameOverPanel;
 
-    // Variable de red: se sincroniza a todos los clientes automáticamente
     private NetworkVariable<int> currentHealth = new NetworkVariable<int>(
-        0,
-        NetworkVariableReadPermission.Everyone,
-        NetworkVariableWritePermission.Server
+        0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server
     );
 
     public override void OnNetworkSpawn()
     {
-        if (IsServer)
-        {
-            currentHealth.Value = maxHealth;
-        }
-
-        // Escuchar cambios de vida para actualizar UI
+        if (IsServer) currentHealth.Value = maxHealth;
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
         currentHealth.OnValueChanged += OnHealthChanged;
     }
 
-    public override void OnNetworkDespawn()
-    {
-        currentHealth.OnValueChanged -= OnHealthChanged;
-    }
-
-    // Llamado desde BulletBehaviour en el servidor
     public void ReceiveDamage()
     {
-        if (!IsServer) return;
-        if (currentHealth.Value <= 0) return;
+        if (!IsServer || currentHealth.Value <= 0) return;
 
         currentHealth.Value--;
 
         if (currentHealth.Value <= 0)
         {
-            // Notificar al dueño que perdió
             NotifyGameOverClientRpc();
         }
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.Owner)]
     private void NotifyGameOverClientRpc()
     {
-        // Solo el jugador dueño de este objeto ve su Game Over
-        if (!IsOwner) return;
-
-        if (GameOverUI.Instance != null)
-        {
-            GameOverUI.Instance.MostrarGameOver();
-        }
+        if (gameOverPanel != null) gameOverPanel.SetActive(true);
+        Time.timeScale = 0; // Pausa el juego
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private void OnHealthChanged(int anterior, int nuevo)
     {
-        // Solo el dueño local actualiza su propia UI de vida
-        if (!IsOwner) return;
-
-        if (GameOverUI.Instance != null)
-        {
-            GameOverUI.Instance.ActualizarVida(nuevo, maxHealth);
-        }
-
-        Debug.Log($"[PlayerHealth] Vida: {nuevo}/{maxHealth}");
+        // Lógica de actualización de UI de vida aquí si la necesitas
     }
-
-    public int GetCurrentHealth() => currentHealth.Value;
-    public int GetMaxHealth() => maxHealth;
 }
