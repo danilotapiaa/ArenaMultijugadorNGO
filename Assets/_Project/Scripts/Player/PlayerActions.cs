@@ -9,8 +9,8 @@ public class PlayerActions : NetworkBehaviour
     public float jumpForce = 5f;
 
     [Header("Configuración de Disparo")]
-    public GameObject bulletPrefab; // Referencia al proyectil
-    public Transform firePoint;     // Punto exacto desde donde sale la bala
+    public GameObject bulletPrefab;
+    public Transform firePoint;
 
     private Rigidbody rb;
 
@@ -23,16 +23,15 @@ public class PlayerActions : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        // Acción de Salto
         if (Input.GetKeyDown(KeyCode.Space))
         {
             RequestJumpRpc();
         }
 
-        // Acción de Disparo (Clic izquierdo del ratón)
         if (Input.GetMouseButtonDown(0))
         {
-            RequestShootRpc();
+            // Enviamos posición y rotación ACTUALES del firePoint al servidor
+            RequestShootRpc(firePoint.position, firePoint.rotation, OwnerClientId);
         }
     }
 
@@ -61,13 +60,19 @@ public class PlayerActions : NetworkBehaviour
     }
 
     // --- LÓGICA DE DISPARO ---
+    // Recibe posición y rotación exactas del cliente dueño + su clientId
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Owner)]
-    private void RequestShootRpc()
+    private void RequestShootRpc(Vector3 spawnPosition, Quaternion spawnRotation, ulong shooterClientId)
     {
-        // 1. El servidor crea la instancia en su propia memoria
-        GameObject bulletInstance = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        GameObject bulletInstance = Instantiate(bulletPrefab, spawnPosition, spawnRotation);
 
-        // 2. El servidor ordena a la red que distribuya este objeto a todos los clientes
+        // Guardamos quién disparó para ignorar colisiones propias
+        BulletBehaviour bullet = bulletInstance.GetComponent<BulletBehaviour>();
+        if (bullet != null)
+        {
+            bullet.shooterClientId = shooterClientId;
+        }
+
         NetworkObject netObj = bulletInstance.GetComponent<NetworkObject>();
         netObj.Spawn();
     }

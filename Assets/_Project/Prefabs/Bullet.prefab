@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 6686933377962173162}
   - component: {fileID: 925802491964338760}
   - component: {fileID: 5513608163038153086}
+  - component: {fileID: 6301046197323500850}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -155,7 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2702935699
+  GlobalObjectIdHash: 4182288238
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -229,3 +230,25 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   speed: 20
   lifeTime: 3
+  shooterClientId: 0
+--- !u!135 &6301046197323500850
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6203602689070415449}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
